@@ -1,0 +1,5 @@
+[ec2-k8s-master]
+ec2-54-162-34-26.compute-1.amazonaws.com
+[ec2-k8s-workers]
+ec2-34-228-146-48.compute-1.amazonaws.com
+ec2-34-234-64-3.compute-1.amazonaws.com

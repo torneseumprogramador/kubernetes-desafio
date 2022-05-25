@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: remote-mysql-configmap
+data:
+  DATABASE_URL: "https://10.104.78.82:3306"
+  USER: "root"

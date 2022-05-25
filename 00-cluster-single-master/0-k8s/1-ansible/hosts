@@ -1,11 +1,11 @@
 [k8s-master]
-ec2-54-234-157-103.compute-1.amazonaws.com
+ec2-3-231-165-164.compute-1.amazonaws.com
 
 [k8s-node-1]
-ec2-54-208-133-148.compute-1.amazonaws.com
+ec2-44-201-114-20.compute-1.amazonaws.com
 
 [k8s-node-2]
-ec2-3-208-21-132.compute-1.amazonaws.com
+ec2-18-204-21-195.compute-1.amazonaws.com
 
 [k8s-node-3]
-ec2-54-87-17-219.compute-1.amazonaws.com
+ec2-3-92-214-138.compute-1.amazonaws.com

@@ -125,7 +125,45 @@
         daemon_reload: yes
         state: restarted
 
+    - name: "Configurando docker runtime"
+      shell: apt update && apt install git wget curl
+      become: yes
+    
+    - name: "Configurando docker runtime"
+      shell: VER=$(curl -s https://api.github.com/repos/Mirantis/cri-dockerd/releases/latest|grep tag_name | cut -d '"' -f 4|sed 's/v//g')
+      become: yes
 
+    - name: "Configurando docker runtime"
+      shell: wget https://github.com/Mirantis/cri-dockerd/releases/download/v${VER}/cri-dockerd-${VER}.amd64.tgz && tar xvf cri-dockerd-${VER}.amd64.tgz && sudo mv cri-dockerd/cri-dockerd /usr/local/bin/
+      become: yes
+
+    - name: "Configurando docker runtime"
+      shell: wget https://raw.githubusercontent.com/Mirantis/cri-dockerd/master/packaging/systemd/cri-docker.service
+      become: yes
+
+    - name: "Configurando docker runtime"
+      shell: wget https://raw.githubusercontent.com/Mirantis/cri-dockerd/master/packaging/systemd/cri-docker.socket
+      become: yes
+
+    - name: "Configurando docker runtime"
+      shell: sudo mv cri-docker.socket cri-docker.service /etc/systemd/system/
+      become: yes
+
+    - name: "Configurando docker runtime"
+      shell: sudo sed -i -e 's,/usr/bin/cri-dockerd,/usr/local/bin/cri-dockerd,' /etc/systemd/system/cri-docker.service
+      become: yes
+    
+    - name: "Configurando docker runtime"
+      shell: sudo sed -i -e 's,/usr/bin/cri-dockerd,/usr/local/bin/cri-dockerd,' /etc/systemd/system/cri-docker.service
+      become: yes
+    
+    - name: "Configurando docker runtime"
+      shell: sudo systemctl daemon-reload && systemctl enable cri-docker.service && systemctl enable --now cri-docker.socket
+      become: yes
+
+    - name: "Configurando docker runtime"
+      shell: sudo kubeadm config images pull --cri-socket /run/cri-dockerd.sock
+      become: yes
 
 # ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts provisionar.yml -u ubuntu --private-key ~/Desktop/desafio_devops/chaves_desafio_kubernetes/id_rsa
 

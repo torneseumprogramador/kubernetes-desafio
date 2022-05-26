@@ -1,4 +1,7 @@
 ```shell
+https://computingforgeeks.com/deploy-kubernetes-cluster-on-ubuntu-with-kubeadm/
+https://computingforgeeks.com/install-mirantis-cri-dockerd-as-docker-engine-shim-for-kubernetes/
+
 # ### dar nome para o master
 # ssh -i ~/Desktop/devops/Treinamento ubuntu@ec2-54-226-188-130.compute-1.amazonaws.com
 
@@ -26,7 +29,7 @@
 
 # source <(kubectl completion bash) # para deixar o kubeclt com auto complete
 
-# kubeadm init --apiserver-advertise-address $(hostname -i | awk '{print $1;exit}')
+# kubeadm init --apiserver-advertise-address $(hostname -i | awk '{print $1;exit}') --cri-socket /run/cri-dockerd.sock
 
 # caso trave com erro de timeout, olhar o security group do haproxy
 # systemctl status kubelet | less # verifica se o serviço está de pé
@@ -52,7 +55,7 @@ Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
 You can now join any number of machines by running the following on each node
 as root:
 
-  kubeadm join <control-plane-host>:<control-plane-port> --token <token> --discovery-token-ca-cert-hash sha256:<hash>
+  kubeadm join <control-plane-host>:<control-plane-port> --token <token> --discovery-token-ca-cert-hash sha256:<hash> --cri-socket /run/cri-dockerd.sock
 ####################################################
 
 # kubectl delete -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"

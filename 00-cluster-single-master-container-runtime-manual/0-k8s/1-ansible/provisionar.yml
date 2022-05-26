@@ -1,0 +1,92 @@
+- hosts:
+  - k8s-master
+  tasks:
+    - name: "Configura hostname k8s-master"
+      shell: hostname k8s-master && echo "k8s-master" > /etc/hostname
+      become: yes
+# ---
+- hosts:
+  - k8s-node-1
+  tasks:
+    - name: "Configura hostname k8s-node-1"
+      shell: hostname k8s-node-1 && echo "k8s-node-1" > /etc/hostname
+      become: yes
+# ---
+- hosts:
+  - k8s-node-2
+  tasks:
+    - name: "Configura hostname k8s-node-2"
+      shell: hostname k8s-node-2 && echo "k8s-node-2" > /etc/hostname
+      become: yes
+# ---
+- hosts:
+  - k8s-node-3
+  tasks:
+    - name: "Configura hostname k8s-node-3"
+      shell: hostname k8s-node-3 && echo "k8s-node-3" > /etc/hostname
+      become: yes
+# ---
+- hosts: all
+  tasks:
+    # doc https://phoenixnap.com/kb/install-kubernetes-on-ubuntu
+
+    - name: install packages required by docker
+      become: true
+      apt:
+        update_cache: yes
+        state: latest
+        name:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gpg-agent
+        - software-properties-common
+
+    - name: Remove swapfile from /etc/fstab
+      mount:
+        name: "{{ item }}"
+        fstype: swap
+        state: absent
+      with_items:
+        - swap
+        - none
+
+    - name: Disable swap
+      command: swapoff -a
+      when: ansible_swaptotal_mb > 0
+
+    - name: Add an apt signing key for Kubernetes
+      become: true
+      apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        state: present
+
+    - name: Adding apt repository for Kubernetes
+      become: true
+      apt_repository:
+        repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+        state: present
+        filename: kubernetes.list
+
+    - name: Install Kubernetes binaries
+      become: true
+      apt: 
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+      vars:
+        packages:
+          - kubelet 
+          - kubeadm 
+          - kubectl
+
+    - name: Restart kubelet
+      become: true
+      service:
+        name: kubelet
+        daemon_reload: yes
+        state: restarted
+
+
+# ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts provisionar.yml -u ubuntu --private-key ~/Desktop/desafio_devops/chaves_desafio_kubernetes/id_rsa
+

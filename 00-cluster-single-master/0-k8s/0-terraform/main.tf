@@ -7,11 +7,18 @@ data "http" "myip" {
 }
 
 resource "aws_instance" "maquina_master" {
-  ami           = "ami-09e67e426f25ce0d7"
+  ami           = "ami-0c4f7023847b90238"
   instance_type = "t2.large"
   key_name      = "chave_publica_desafio_kubernetes"
+  # subnet_id = "subnet-08645deaef16c66a5"
+  associate_public_ip_address = true
   tags = {
     Name = "k8s-master"
+  }
+  root_block_device {
+    delete_on_termination = true
+    encrypted             = false
+    volume_size           = 32
   }
   vpc_security_group_ids = [aws_security_group.acessos_master_single_master.id]
   depends_on = [
@@ -20,11 +27,18 @@ resource "aws_instance" "maquina_master" {
 }
 
 resource "aws_instance" "workers" {
-  ami           = "ami-09e67e426f25ce0d7"
+  ami           = "ami-0c4f7023847b90238"
   instance_type = "t2.medium"
   key_name      = "chave_publica_desafio_kubernetes"
+  # subnet_id = "subnet-0623015d80441b535"
+  associate_public_ip_address = true
   tags = {
     Name = "k8s-node-${count.index + 1}"
+  }
+  root_block_device {
+    delete_on_termination = true
+    encrypted             = false
+    volume_size           = 32
   }
   vpc_security_group_ids = [aws_security_group.acessos_workers_single_master.id]
   count         = 3
@@ -33,6 +47,7 @@ resource "aws_instance" "workers" {
 resource "aws_security_group" "acessos_master_single_master" {
   name        = "acessos_master_single_master"
   description = "acessos_master_single_master inbound traffic"
+  vpc_id = "vpc-f0d19897"
 
   ingress = [
     {
@@ -110,6 +125,7 @@ resource "aws_security_group" "acessos_master_single_master" {
 resource "aws_security_group" "acessos_workers_single_master" {
   name        = "acessos_workers_single_master"
   description = "acessos_workers_single_master inbound traffic"
+  vpc_id = "vpc-f0d19897"
 
   ingress = [
     {
@@ -161,8 +177,7 @@ resource "aws_security_group" "acessos_workers_single_master" {
 # terraform refresh para mostrar o ssh
 output "maquina_master" {
   value = [
-    "master - ${aws_instance.maquina_master.public_ip} - ssh -i ~/Desktop/desafio_devops/chaves_desafio_kubernetes/id_rsa ubuntu@${aws_instance.maquina_master.public_dns} -o ServerAliveInterval=60",
-    "sg master - ${aws_security_group.acessos_workers_single_master.id}"
+    "master - ${aws_instance.maquina_master.public_ip}",
   ]
 }
 
@@ -170,6 +185,6 @@ output "maquina_master" {
 output "maquina_workers" {
   value = [
     for key, item in aws_instance.workers :
-      "worker ${key+1} - ${item.public_ip} - ssh -i ~/Desktop/desafio_devops/chaves_desafio_kubernetes/id_rsa ubuntu@${item.public_dns} -o ServerAliveInterval=60"
+      "worker ${key+1} - ${item.public_ip}"
   ]
 }

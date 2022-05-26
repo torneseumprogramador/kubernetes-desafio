@@ -70,8 +70,14 @@
         dest: "/etc/docker/daemon.json"
       become: yes
 
+    - name: "Configurando containerd"
+      copy:
+        src: "docker/config.toml"
+        dest: "/etc/containerd/config.toml"
+      become: yes
+
     - name: "Restart docker"
-      shell: sudo systemctl daemon-reload && sudo systemctl restart docker # && sudo systemctl restart kubelet
+      shell: systemctl restart containerd && systemctl daemon-reload && systemctl restart docker
       become: yes
 
     - name: Remove swapfile from /etc/fstab
@@ -111,10 +117,6 @@
           - kubelet 
           - kubeadm 
           - kubectl
-        
-    - name: "Restart containerd"
-      shell: rm /etc/containerd/config.toml && systemctl restart containerd
-      become: yes
 
     - name: Restart kubelet
       become: true

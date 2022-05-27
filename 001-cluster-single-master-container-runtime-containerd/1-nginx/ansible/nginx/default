@@ -1,0 +1,6 @@
+
+server {
+  location / {
+    proxy_pass http://54.226.188.130:30000; # IP DO CONTROL PLANE na porta do nodeport
+  }
+}

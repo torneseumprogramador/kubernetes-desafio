@@ -1,90 +1,25 @@
 - hosts:
-  - ec2-k8s-proxy
-  handlers:
-    - name: "restart haproxy"
-      service:
-        name: haproxy
-        state: restarted
-      become: yes
-
-  tasks:
-    - name: "Configura hostname haproxy"
-      shell: hostname k8s-proxy && echo "k8s-proxy" > /etc/hostname
-      become: yes
-    
-    - name: "Roda: sudo apt-get update"
-      become: yes
-      apt:
-        upgrade: yes
-        update_cache: yes
-        cache_valid_time: 86400 #Um dia
-
-    - name: "Instala pacotes"
-      apt:
-        name: "{{ item }}"
-        state: latest
-      become: yes # roda com sudo
-      with_items:
-        - haproxy
-
-    - name: "Trocando haproxy"
-      copy:
-        src: "haproxy/haproxy.cfg"
-        dest: "/etc/haproxy/haproxy.cfg"
-      become: yes
-      notify:
-        - "restart haproxy"
-# ---
-- hosts:
-  - ec2-k8s-m1
+  - k8s-master
   tasks:
     - name: "Configura hostname k8s-master"
-      shell: hostname k8s-master-1 && echo "k8s-master-1" > /etc/hostname
+      shell: hostname k8s-master && echo "k8s-master" > /etc/hostname
       become: yes
 # ---
 - hosts:
-  - ec2-k8s-m2
+  - k8s-node-1
   tasks:
-    - name: "Configura hostname k8s-master"
-      shell: hostname k8s-master-2 && echo "k8s-master-2" > /etc/hostname
+    - name: "Configura hostname k8s-node-1"
+      shell: hostname k8s-node-1 && echo "k8s-node-1" > /etc/hostname
       become: yes
 # ---
 - hosts:
-  - ec2-k8s-m3
+  - k8s-node-2
   tasks:
-    - name: "Configura hostname k8s-master"
-      shell: hostname k8s-master-3 && echo "k8s-master-3" > /etc/hostname
+    - name: "Configura hostname k8s-node-2"
+      shell: hostname k8s-node-2 && echo "k8s-node-2" > /etc/hostname
       become: yes
 # ---
-- hosts:
-  - ec2-k8s-w1
-  tasks:
-    - name: "Configura hostname k8s-workers"
-      shell: hostname k8s-workers-1 && echo "k8s-workers-1" > /etc/hostname
-      become: yes
-# ---
-- hosts:
-  - ec2-k8s-w2
-  tasks:
-    - name: "Configura hostname k8s-workers"
-      shell: hostname k8s-workers-2 && echo "k8s-workers-2" > /etc/hostname
-      become: yes
-# ---
-- hosts:
-  - ec2-k8s-w3
-  tasks:
-    - name: "Configura hostname k8s-workers"
-      shell: hostname k8s-workers-3 && echo "k8s-workers-3" > /etc/hostname
-      become: yes
-# ---
-- hosts:
-  - ec2-k8s-m1
-  - ec2-k8s-m2
-  - ec2-k8s-m3
-  - ec2-k8s-w1
-  - ec2-k8s-w2
-  - ec2-k8s-w3
-
+- hosts: all
   tasks:
     - name: install packages required by docker
       become: true
@@ -217,44 +152,6 @@
         daemon_reload: yes
         state: restarted
 
-    - name: "Host para o haproxy"
-      copy:
-        src: "host/hosts"
-        dest: "/etc/hosts"
-      become: yes
-# ---
-- hosts:
-  - ec2-k8s-m1
-  become: yes
-  tasks:    
-    - name: "Reset cluster"
-      shell: "kubeadm reset -f"
 
-    - shell: "kubeadm init --control-plane-endpoint 'k8s-haproxy:6443' --upload-certs"
-      register: ps
-    - debug:
-        msg: " '{{ ps.stdout_lines }}' "
-
-    - name: "Colocando no path da maquina o conf do kubernetes"
-      shell: "mkdir -p $HOME/.kube && sudo cp -f /etc/kubernetes/admin.conf $HOME/.kube/config && sudo chown $(id -u):$(id -g) $HOME/.kube/config && export KUBECONFIG=/etc/kubernetes/admin.conf"
-
-  
-  
-
-# # ansible-playbook -i hosts provisionar.yml -u ubuntu --private-key ~/Desktop/devops/Treinamento
-# # ssh -i ~/Desktop/devops/Treinamento ubuntu@ec2-54-174-235-197.compute-1.amazonaws.com
-# # ssh -i ~/Desktop/devops/Treinamento ubuntu@ec2-50-16-162-135.compute-1.amazonaws.com
-# # ssh -i ~/Desktop/devops/Treinamento ubuntu@ec2-54-173-115-181.compute-1.amazonaws.com
-
-# # *** verifica log error
-# # vim /etc/haproxy/haproxy.cfg
-# # systemctl restart haproxy
-# # systemctl status haproxy.service
-# # tail -f /var/log/haproxy.log
-
-# # tail -f /var/log/nginx/error.log
-
-# ansible-playbook -i hosts provisionar.yml -u ubuntu --private-key ~/Desktop/devops/Treinamento
-# ssh -i ~/Desktop/devops/Treinamento ubuntu@ec2-54-152-41-46.compute-1.amazonaws.com
-# systemctl status haproxy | less
+# ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts provisionar.yml -u ubuntu --private-key ~/Desktop/desafio_devops/chaves_desafio_kubernetes/id_rsa
 

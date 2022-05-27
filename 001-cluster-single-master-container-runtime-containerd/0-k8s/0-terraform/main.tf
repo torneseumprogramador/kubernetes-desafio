@@ -13,7 +13,7 @@ resource "aws_instance" "maquina_master" {
   # subnet_id = "subnet-08645deaef16c66a5"
   associate_public_ip_address = true
   tags = {
-    Name = "k8s-master_sem_container-runtime"
+    Name = "k8s-master_com_containerd"
   }
   root_block_device {
     delete_on_termination = true
@@ -33,7 +33,7 @@ resource "aws_instance" "workers" {
   # subnet_id = "subnet-0623015d80441b535"
   associate_public_ip_address = true
   tags = {
-    Name = "k8s-node_sem_container-runtime-${count.index + 1}"
+    Name = "k8s-node_com_containerd-${count.index + 1}"
   }
   root_block_device {
     delete_on_termination = true

@@ -19,139 +19,52 @@
       shell: hostname k8s-node-2 && echo "k8s-node-2" > /etc/hostname
       become: yes
 # ---
+# install link: https://phoenixnap.com/kb/install-kubernetes-on-ubuntu
 - hosts: all
+  become: true
   tasks:
-    - name: install packages required by docker
-      become: true
-      apt:
-        update_cache: yes
-        state: latest
-        name:
-        - apt-transport-https
-        - ca-certificates
-        - curl
-        - gpg-agent
-        - software-properties-common
+    - name: apt-get update
+      shell: apt-get update
 
-    - name: add docker GPG key
-      become: true
-      apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        state: present
+    - name: apt-get install docker.io -y
+      shell: apt-get install docker.io -y
 
-    - name: add docker apt repo
-      become: true
-      apt_repository:
-        repo: deb https://download.docker.com/linux/ubuntu bionic stable
-        state: present
+    - name: systemctl start docker
+      shell: systemctl start docker
 
-    - name: install docker
-      become: true
-      apt:
-        update_cache: yes
-        state: latest
-        name:
-        - docker-ce
-        - docker-ce-cli
-        - containerd.io
+    - name: Kubernetes Signing Key
+      shell: curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
 
-    - name: "Corrigindo docker para o kubernetes"
-      copy:
-        src: "docker/daemon.json"
-        dest: "/etc/docker/daemon.json"
-      become: yes
+    - name: apt-get install curl 
+      shell: apt-get install curl -y
 
-    - name: "Restart docker"
-      shell: sudo systemctl daemon-reload && sudo systemctl restart docker # && sudo systemctl restart kubelet
-      become: yes
+    - name: Add Software Repositories
+      shell: apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
 
-    - name: Remove swapfile from /etc/fstab
-      mount:
-        name: "{{ item }}"
-        fstype: swap
-        state: absent
-      with_items:
-        - swap
-        - none
+    - name: apt-get install kubeadm
+      shell: apt-get install kubeadm -y
+    
+    - name: apt-get install kubeadm
+      shell: apt-get install kubelet -y
+    
+    - name: apt-get install kubeadm
+      shell: apt-get install kubectl -y
 
-    - name: Disable swap
-      command: swapoff -a
-      when: ansible_swaptotal_mb > 0
-
-    - name: Add an apt signing key for Kubernetes
-      become: true
-      apt_key:
-        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-        state: present
-
-    - name: Adding apt repository for Kubernetes
-      become: true
-      apt_repository:
-        repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
-        state: present
-        filename: kubernetes.list
-
-    - name: Install Kubernetes binaries
-      become: true
-      apt: 
-        name: "{{ packages }}"
-        state: present
-        update_cache: yes
-      vars:
-        packages:
-          - kubelet 
-          - kubeadm 
-          - kubectl
-
-    - name: "Corrigindo containerd.conf"
+    - name: apt-get install kubeadm
       ignore_errors: yes
-      copy:
-        src: "containerd.conf"
-        dest: "/etc/modules-load.d/containerd.conf"
-      become: yes
-
-    - name: "modprobe overlay"
-      shell: modprobe overlay
-      become: yes
-
-    - name: "modprobe br_netfilter"
-      shell: modprobe br_netfilter
-      become: yes
-
-    - name: "Corrigindo kubernetes.conf"
-      ignore_errors: yes
-      copy:
-        src: "kubernetes.conf"
-        dest: "/etc/sysctl.d/kubernetes.conf"
-      become: yes
-
-    - name: "sysctl --system"
-      shell: sysctl --system
-      become: yes
-
-    - name: "modprobe overlay"
-      shell: apt install -y curl gnupg2 software-properties-common apt-transport-https ca-certificates
-      become: yes
-
-    - name: "mkdir -p /etc/containerd"
-      shell: mkdir -p /etc/containerd
-      become: yes
-
-    - name: "containerd config"
-      shell: containerd config default > /etc/containerd/config.toml
-      become: yes
-
-    - name: "systemctl restart containerd"
-      shell: systemctl restart containerd
-      become: yes
-
-    - name: Restart kubelet
-      become: true
-      service:
-        name: kubelet
-        daemon_reload: yes
-        state: restarted
-
+      shell: swapoff –a
 
 # ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts provisionar.yml -u ubuntu --private-key ~/Desktop/desafio_devops/chaves_desafio_kubernetes/id_rsa
 
+# === no servidor control-plane ===
+# kubeadm init --apiserver-advertise-address $(hostname -i | awk '{print $1;exit}')
+
+# mkdir -p $HOME/.kube
+# sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+# sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+# vim ~/.bashrc # colocar os sources abaixo
+# export KUBECONFIG=/etc/kubernetes/admin.conf
+# source <(kubectl completion bash) # para deixar o kubeclt com auto complete
+
+# kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"

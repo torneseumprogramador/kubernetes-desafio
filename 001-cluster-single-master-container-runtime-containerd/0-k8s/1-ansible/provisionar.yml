@@ -68,3 +68,4 @@
 # source <(kubectl completion bash) # para deixar o kubeclt com auto complete
 
 # kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+# kubectl get pods -n kube-system

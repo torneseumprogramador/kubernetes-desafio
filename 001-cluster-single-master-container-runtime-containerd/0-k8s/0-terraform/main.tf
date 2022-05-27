@@ -20,7 +20,7 @@ resource "aws_instance" "maquina_master" {
     encrypted             = false
     volume_size           = 32
   }
-  vpc_security_group_ids = [aws_security_group.acessos_master_single_master.id]
+  vpc_security_group_ids = [aws_security_group.acessos_master.id]
   depends_on = [
     aws_instance.workers,
   ]
@@ -40,13 +40,13 @@ resource "aws_instance" "workers" {
     encrypted             = false
     volume_size           = 32
   }
-  vpc_security_group_ids = [aws_security_group.acessos_workers_single_master.id]
+  vpc_security_group_ids = [aws_security_group.acessos_workers.id]
   count         = 2
 }
 
-resource "aws_security_group" "acessos_master_single_master" {
-  name        = "acessos_master_sem_container-runtime"
-  description = "acessos_master_single_master inbound traffic"
+resource "aws_security_group" "acessos_master" {
+  name        = "acessos_master_com_containerd"
+  description = "acessos_master inbound traffic"
   vpc_id = "vpc-f0d19897"
 
   ingress = [
@@ -71,35 +71,7 @@ resource "aws_security_group" "acessos_master_single_master" {
       prefix_list_ids = null,
       security_groups: null,
       self: null
-    },
-    # {
-    #   cidr_blocks      = []
-    #   description      = ""
-    #   from_port        = 0
-    #   ipv6_cidr_blocks = []
-    #   prefix_list_ids  = []
-    #   protocol         = "-1"
-    #   security_groups  = [
-    #     # "${aws_security_group.acessos_workers_single_master.id}", não pode porque é circular
-    #     "sg-015a0fb8546987fea", # security group do acessos_workers_single_master
-    #     # "sg-292334788sh232u22", # security group do nginx
-    #   ]
-    #   self             = false
-    #   to_port          = 0
-    # },
-    # {
-    #   cidr_blocks      = [
-    #     "0.0.0.0/0",
-    #   ]
-    #   description      = ""
-    #   from_port        = 0
-    #   ipv6_cidr_blocks = []
-    #   prefix_list_ids  = []
-    #   protocol         = "tcp"
-    #   security_groups  = []
-    #   self             = false
-    #   to_port          = 65535
-    # },
+    }
   ]
 
   egress = [
@@ -117,14 +89,14 @@ resource "aws_security_group" "acessos_master_single_master" {
   ]
 
   tags = {
-    Name = "acessos_master_single_master"
+    Name = "acessos_master"
   }
 }
 
 
-resource "aws_security_group" "acessos_workers_single_master" {
-  name        = "acessos_workers_sem_container-runtime"
-  description = "acessos_workers_single_master inbound traffic"
+resource "aws_security_group" "acessos_workers" {
+  name        = "acessos_workers_com_containerd"
+  description = "acessos_workers inbound traffic"
   vpc_id = "vpc-f0d19897"
 
   ingress = [
@@ -138,20 +110,7 @@ resource "aws_security_group" "acessos_workers_single_master" {
       prefix_list_ids = null,
       security_groups: null,
       self: null
-    },
-    # {
-    #   cidr_blocks      = []
-    #   description      = ""
-    #   from_port        = 0
-    #   ipv6_cidr_blocks = []
-    #   prefix_list_ids  = []
-    #   protocol         = "-1"
-    #   security_groups  = [
-    #     "${aws_security_group.acessos_master_single_master.id}",
-    #   ]
-    #   self             = false
-    #   to_port          = 0
-    # },
+    }
   ]
 
   egress = [
@@ -169,7 +128,7 @@ resource "aws_security_group" "acessos_workers_single_master" {
   ]
 
   tags = {
-    Name = "acessos_workers_single_master"
+    Name = "acessos_workers"
   }
 }
 

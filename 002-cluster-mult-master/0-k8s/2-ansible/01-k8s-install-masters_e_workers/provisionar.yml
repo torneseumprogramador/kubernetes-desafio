@@ -77,6 +77,7 @@
       shell: hostname k8s-workers-3 && echo "k8s-workers-3" > /etc/hostname
       become: yes
 # ---
+# install link: https://phoenixnap.com/kb/install-kubernetes-on-ubuntu
 - hosts:
   - ec2-k8s-m1
   - ec2-k8s-m2

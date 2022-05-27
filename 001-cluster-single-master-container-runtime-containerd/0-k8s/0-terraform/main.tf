@@ -9,7 +9,8 @@ data "http" "myip" {
 resource "aws_instance" "maquina_master" {
   ami           = "ami-09e67e426f25ce0d7"
   instance_type = "t2.large"
-  key_name      = "chave_publica_desafio_kubernetes"
+  key_name      = "ssh_padrao_computador_reserva"
+  # key_name      = "chave_publica_desafio_kubernetes"
   # subnet_id = "subnet-08645deaef16c66a5"
   associate_public_ip_address = true
   tags = {
@@ -29,7 +30,8 @@ resource "aws_instance" "maquina_master" {
 resource "aws_instance" "workers" {
   ami           = "ami-09e67e426f25ce0d7"
   instance_type = "t2.medium"
-  key_name      = "chave_publica_desafio_kubernetes"
+  key_name      = "ssh_padrao_computador_reserva"
+  # key_name      = "chave_publica_desafio_kubernetes"
   # subnet_id = "subnet-0623015d80441b535"
   associate_public_ip_address = true
   tags = {
@@ -71,7 +73,33 @@ resource "aws_security_group" "acessos_master" {
       prefix_list_ids = null,
       security_groups: null,
       self: null
-    }
+    },
+    {
+      cidr_blocks      = [
+        "0.0.0.0/0",
+      ]
+      description      = ""
+      from_port        = 80
+      ipv6_cidr_blocks = []
+      prefix_list_ids  = []
+      protocol         = "tcp"
+      security_groups  = []
+      self             = false
+      to_port          = 80
+    },
+    {
+      cidr_blocks      = []
+      description      = ""
+      from_port        = 0
+      ipv6_cidr_blocks = []
+      prefix_list_ids  = []
+      protocol         = "tcp"
+      security_groups  = [
+        "sg-001ea6a437f18c1bb",
+      ]
+      self             = false
+      to_port          = 65535
+    },
   ]
 
   egress = [
@@ -110,7 +138,20 @@ resource "aws_security_group" "acessos_workers" {
       prefix_list_ids = null,
       security_groups: null,
       self: null
-    }
+    },
+    {
+      cidr_blocks      = []
+      description      = ""
+      from_port        = 0
+      ipv6_cidr_blocks = []
+      prefix_list_ids  = []
+      protocol         = "tcp"
+      security_groups  = [
+        "sg-080dcbd2428812b08",
+      ]
+      self             = false
+      to_port          = 65535
+    },
   ]
 
   egress = [
@@ -145,5 +186,33 @@ output "maquina_workers" {
   value = [
     for key, item in aws_instance.workers :
       "worker ${key+1} - ${item.public_ip}"
+  ]
+}
+
+
+resource "aws_instance" "nginx" {
+  ami           = "ami-09e67e426f25ce0d7"
+  instance_type = "t2.micro"
+  key_name      = "ssh_padrao_computador_reserva"
+  # key_name      = "chave_publica_desafio_kubernetes"
+  # subnet_id = "subnet-08645deaef16c66a5"
+  associate_public_ip_address = true
+  tags = {
+    Name = "k8s-nginx"
+  }
+  root_block_device {
+    delete_on_termination = true
+    encrypted             = false
+    volume_size           = 8
+  }
+  vpc_security_group_ids = [aws_security_group.acessos_master.id]
+  depends_on = [
+    aws_instance.workers,
+  ]
+}
+
+output "nginx" {
+  value = [
+    "nginx - ${aws_instance.nginx.public_ip}",
   ]
 }

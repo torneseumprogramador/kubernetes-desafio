@@ -69,3 +69,7 @@
 
 # kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 # kubectl get pods -n kube-system
+
+# Correção na AWS BUG
+# - https://github.com/rancher/rancher/issues/6139
+# kubectl rollout restart deployment coredns --namespace

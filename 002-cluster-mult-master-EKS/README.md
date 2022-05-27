@@ -23,18 +23,6 @@ Apagar Cluster
 eksctl delete cluster --name k8s-desafio --region us-east-1
 ```
 
-Utilizando console aws web
-- https://us-east-1.console.aws.amazon.com/eks
-- https://aws.amazon.com/pt/premiumsupport/knowledge-center/eks-api-server-unauthorized-error/
-- https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html
-
-```shell
-aws configure
-aws sts get-caller-identity
-rm -rf ~/.kube/
-aws eks update-kubeconfig --name desafio-k8s-novo --region us-east-1
-```
-
 Utilizando console awscli
 - https://docs.aws.amazon.com/cli/latest/reference/eks/create-cluster.html
 ```shell

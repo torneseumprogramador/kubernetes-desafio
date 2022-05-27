@@ -73,3 +73,6 @@
 # Correção na AWS BUG
 # - https://github.com/rancher/rancher/issues/6139
 # kubectl rollout restart deployment coredns --namespace
+
+# recuperar join
+# kubeadm token create --print-join-command

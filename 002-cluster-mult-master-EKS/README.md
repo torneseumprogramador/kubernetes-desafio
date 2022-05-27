@@ -1,7 +1,29 @@
 Utilizando ekclt
- - https://eksctl.io/usage/eks-managed-nodes/
+ - https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html
 
-Utilizando console aws
+```shell
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+brew tap weaveworks/tap
+brew install weaveworks/tap/eksctl
+brew upgrade eksctl && brew link --overwrite eksctl
+eksctl version
+```
+
+Criando cluster
+- https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html
+```shell
+eksctl create cluster --name k8s-desafio --region us-east-1
+kubectl get nodes -o wide
+kubectl get pods -A -o wide
+```
+
+Apagar Cluster
+- https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html
+```shell
+eksctl delete cluster --name k8s-desafio --region us-east-1
+```
+
+Utilizando console aws web
 - https://us-east-1.console.aws.amazon.com/eks
 - https://aws.amazon.com/pt/premiumsupport/knowledge-center/eks-api-server-unauthorized-error/
 - https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html
@@ -9,12 +31,17 @@ Utilizando console aws
 ```shell
 aws configure
 aws sts get-caller-identity
-rm -rf ./rm -rf ./.kube/config
-aws eks update-kubeconfig --name < NOME_CLUSTER > --region < SUA_REGIAO >
+rm -rf ~/.kube/
+aws eks update-kubeconfig --name desafio-k8s-novo --region us-east-1
 ```
 
-Criar os nós
+Utilizando console awscli
+- https://docs.aws.amazon.com/cli/latest/reference/eks/create-cluster.html
+```shell
+aws eks create-cluster --name desafio-k8s --role-arn arn:aws:iam::763818760783:role/eksClusterRole2 --resources-vpc-config subnetIds=subnet-ef5b8fa6,subnet-1fa24744,subnet-df562fba,securityGroupIds=sg-0bfc78ff0cd8590be
+```
 
+Criar os worknodes
 - Entrar no cloud formation
 - https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/template
 
@@ -26,7 +53,7 @@ Nome Cloud Formation:
 - k8s-ilab-nodes
 
 Nome cluster
-- < NOME_CLUSTER >
+- desafio-k8s
 
 ClusterControlPlaneSecurityGroup
  - Selecione o criado pelo EKS

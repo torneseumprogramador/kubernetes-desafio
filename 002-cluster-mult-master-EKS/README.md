@@ -38,7 +38,10 @@ aws eks update-kubeconfig --name desafio-k8s-novo --region us-east-1
 Utilizando console awscli
 - https://docs.aws.amazon.com/cli/latest/reference/eks/create-cluster.html
 ```shell
-aws eks create-cluster --name desafio-k8s --role-arn arn:aws:iam::763818760783:role/eksClusterRole2 --resources-vpc-config subnetIds=subnet-ef5b8fa6,subnet-1fa24744,subnet-df562fba,securityGroupIds=sg-0bfc78ff0cd8590be
+aws eks create-cluster --name --region us-east-1 desafio-k8s --role-arn arn:aws:iam::763818760783:role/eksClusterRole2 --resources-vpc-config subnetIds=subnet-ef5b8fa6,subnet-1fa24744,subnet-df562fba,securityGroupIds=sg-0bfc78ff0cd8590be
+
+rm -rf ~/.kube/
+aws eks update-kubeconfig --name desafio-k8s --region us-east-1
 ```
 
 Criar os worknodes

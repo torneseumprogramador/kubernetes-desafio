@@ -1,6 +1,6 @@
 Utilizando ekclt
+- Instalando
  - https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html
-
 ```shell
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 brew tap weaveworks/tap
@@ -25,6 +25,8 @@ eksctl delete cluster --name k8s-desafio --region us-east-1
 
 Utilizando console awscli
 - https://docs.aws.amazon.com/cli/latest/reference/eks/create-cluster.html
+
+Criando cluster
 ```shell
 aws eks create-cluster --name --region us-east-1 desafio-k8s --role-arn arn:aws:iam::763818760783:role/eksClusterRole2 --resources-vpc-config subnetIds=subnet-ef5b8fa6,subnet-1fa24744,subnet-df562fba,securityGroupIds=sg-0bfc78ff0cd8590be
 

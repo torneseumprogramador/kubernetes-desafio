@@ -62,7 +62,10 @@
         name:
         - docker-ce
         - docker-ce-cli
-        - containerd.io
+
+    - name: "Configurando docker runtime"
+      shell: mkdir -p /etc/systemd/system/docker.service.d
+      become: yes
 
     - name: "Corrigindo docker para o kubernetes"
       copy:
@@ -70,14 +73,8 @@
         dest: "/etc/docker/daemon.json"
       become: yes
 
-    - name: "Configurando containerd"
-      copy:
-        src: "docker/config.toml"
-        dest: "/etc/containerd/config.toml"
-      become: yes
-
     - name: "Restart docker"
-      shell: systemctl restart containerd && systemctl daemon-reload && systemctl restart docker
+      shell: systemctl daemon-reload && systemctl restart docker
       become: yes
 
     - name: Remove swapfile from /etc/fstab
@@ -98,6 +95,20 @@
       apt_key:
         url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
         state: present
+
+    - name: "Configurando docker runtime"
+      shell: modprobe overlay && modprobe br_netfilter
+      become: yes
+
+    - name: "Corrigindo docker para o kubernetes"
+      copy:
+        src: "kubernetes.conf"
+        dest: "/etc/sysctl.d/kubernetes.conf"
+      become: yes
+
+    - name: "Configurando docker runtime"
+      shell: sudo sysctl --system
+      become: yes
 
     - name: Adding apt repository for Kubernetes
       become: true
@@ -126,15 +137,7 @@
         state: restarted
 
     - name: "Configurando docker runtime"
-      shell: apt update && apt install git wget curl
-      become: yes
-    
-    - name: "Configurando docker runtime"
-      shell: VER=$(curl -s https://api.github.com/repos/Mirantis/cri-dockerd/releases/latest|grep tag_name | cut -d '"' -f 4|sed 's/v//g')
-      become: yes
-
-    - name: "Configurando docker runtime"
-      shell: wget https://github.com/Mirantis/cri-dockerd/releases/download/v${VER}/cri-dockerd-${VER}.amd64.tgz && tar xvf cri-dockerd-${VER}.amd64.tgz && sudo mv cri-dockerd/cri-dockerd /usr/local/bin/
+      shell: VER=$(curl -s https://api.github.com/repos/Mirantis/cri-dockerd/releases/latest|grep tag_name | cut -d '"' -f 4|sed 's/v//g') && wget https://github.com/Mirantis/cri-dockerd/releases/download/v${VER}/cri-dockerd-${VER}.amd64.tgz && tar xvf cri-dockerd-${VER}.amd64.tgz && sudo mv cri-dockerd/cri-dockerd /usr/local/bin/
       become: yes
 
     - name: "Configurando docker runtime"
@@ -161,9 +164,9 @@
       shell: sudo systemctl daemon-reload && systemctl enable cri-docker.service && systemctl enable --now cri-docker.socket
       become: yes
 
-    - name: "Configurando docker runtime"
-      shell: sudo kubeadm config images pull --cri-socket /run/cri-dockerd.sock
-      become: yes
+    # - name: "Configurando docker runtime"
+    #   shell: sudo kubeadm config images pull --cri-socket /run/cri-dockerd.sock
+    #   become: yes
 
 # ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts provisionar.yml -u ubuntu --private-key ~/Desktop/desafio_devops/chaves_desafio_kubernetes/id_rsa
 

@@ -79,8 +79,8 @@
 # ---
 - hosts:
   - ec2-k8s-m1
-  - ec2-k8s-m3
   - ec2-k8s-m2
+  - ec2-k8s-m3
   - ec2-k8s-w1
   - ec2-k8s-w2
   - ec2-k8s-w3
@@ -167,6 +167,46 @@
           - kubelet 
           - kubeadm 
           - kubectl
+
+    - name: "Corrigindo containerd.conf"
+      copy:
+        src: "containerd.conf"
+        dest: "/etc/modules-load.d/containerd.conf"
+      become: yes
+
+    - name: "modprobe overlay"
+      shell: modprobe overlay
+      become: yes
+
+    - name: "modprobe br_netfilter"
+      shell: modprobe br_netfilter
+      become: yes
+
+    - name: "Corrigindo kubernetes.conf"
+      copy:
+        src: "kubernetes.conf"
+        dest: "/etc/sysctl.d/kubernetes.conf"
+      become: yes
+
+    - name: "sysctl --system"
+      shell: sysctl --system
+      become: yes
+
+    - name: "modprobe overlay"
+      shell: apt install -y curl gnupg2 software-properties-common apt-transport-https ca-certificates
+      become: yes
+
+    - name: "mkdir -p /etc/containerd"
+      shell: mkdir -p /etc/containerd
+      become: yes
+
+    - name: "containerd config"
+      shell: containerd config default > /etc/containerd/config.toml
+      become: yes
+
+    - name: "systemctl restart containerd"
+      shell: systemctl restart containerd
+      become: yes
 
     - name: Restart kubelet
       become: true

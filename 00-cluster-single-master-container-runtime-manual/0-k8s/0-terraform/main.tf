@@ -7,7 +7,7 @@ data "http" "myip" {
 }
 
 resource "aws_instance" "maquina_master" {
-  ami           = "ami-0c4f7023847b90238"
+  ami           = "ami-09d56f8956ab235b3"
   instance_type = "t2.large"
   key_name      = "chave_publica_desafio_kubernetes"
   # subnet_id = "subnet-08645deaef16c66a5"
@@ -27,7 +27,7 @@ resource "aws_instance" "maquina_master" {
 }
 
 resource "aws_instance" "workers" {
-  ami           = "ami-0c4f7023847b90238"
+  ami           = "ami-09d56f8956ab235b3"
   instance_type = "t2.medium"
   key_name      = "chave_publica_desafio_kubernetes"
   # subnet_id = "subnet-0623015d80441b535"
@@ -41,7 +41,7 @@ resource "aws_instance" "workers" {
     volume_size           = 32
   }
   vpc_security_group_ids = [aws_security_group.acessos_workers_single_master.id]
-  count         = 3
+  count         = 2
 }
 
 resource "aws_security_group" "acessos_master_single_master" {

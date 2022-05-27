@@ -7,10 +7,10 @@
       shell: "kubeadm reset -f"
 
     - name: "Fazendo join kubernetes master"
-      shell: kubeadm join k8s-haproxy:6443 --token 69pwg2.xuvpr56q1rujlcnj  --discovery-token-ca-cert-hash sha256:a30afd4ba7a327f9335c64997ac39ded798f09bbfbd767410a603b7057a16b4a  --control-plane --certificate-key 173e99de0da6e745f768d80a2903190f1d041ac41d27ab8a15aa5e70f038b618
+      shell: kubeadm join k8s-haproxy:6443 --token 8u901j.1q0pbtxayev3u3wo  --discovery-token-ca-cert-hash sha256:93259a565ef7a6025ab1dbd8fa66d53ee0e7f47edd66fcfc814ae5b9b4abdcd6  --control-plane --certificate-key b74a1938ee5ac8b222a5e2f231c430569968aec78fdc3fe87000a792cb38be9a
 
     - name: "Colocando no path da maquina o conf do kubernetes"
-      shell: mkdir -p /home/ubuntu/.kube && sudo cp -f /etc/kubernetes/admin.conf /home/ubuntu/.kube/config && sudo chown 1000:1000 /home/ubuntu/.kube/config && export KUBECONFIG=/etc/kubernetes/admin.conf
+      shell: mkdir -p /Users/danilo/.kube && sudo cp -f /etc/kubernetes/admin.conf /Users/danilo/.kube/config && sudo chown 502:20 /Users/danilo/.kube/config && export KUBECONFIG=/etc/kubernetes/admin.conf
 #---
 - hosts:
   - ec2-k8s-w1
@@ -22,7 +22,7 @@
       shell: "kubeadm reset -f"
 
     - name: "Fazendo join kubernetes worker"
-      shell: kubeadm join k8s-haproxy:6443 --token 69pwg2.xuvpr56q1rujlcnj  --discovery-token-ca-cert-hash sha256:a30afd4ba7a327f9335c64997ac39ded798f09bbfbd767410a603b7057a16b4a 
+      shell: kubeadm join k8s-haproxy:6443 --token 8u901j.1q0pbtxayev3u3wo  --discovery-token-ca-cert-hash sha256:93259a565ef7a6025ab1dbd8fa66d53ee0e7f47edd66fcfc814ae5b9b4abdcd6 
 
 #---
 - hosts:
@@ -30,7 +30,8 @@
   become: yes
   tasks:
     - name: "Configura weavenet para reconhecer os nós master e workers"
-      shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+      shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')&env.IPALLOC_RANGE=192.168.0.0/16" ### caso dê problema de conflito de IP interno kubernetes com a rede externa VPC ###
+      #shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 
     - name: Espera 30 segundos
       wait_for: timeout=30

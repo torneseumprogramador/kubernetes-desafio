@@ -1,21 +1,21 @@
 variable key_pair_name {
   type        = string
-  default     = "kp-mineiro"
+  default     = "chave_publica_desafio_kubernetes"
 }
 
 variable subnet-az-a {
   type        = string
-  default     = "subnet-0842414f901483088"
+  default     = "subnet-ef5b8fa6"
 }
 
 variable vpc_id {
   type        = string
-  default     = "vpc-03d1b7e53da104e7c"
+  default     = "vpc-f0d19897"
   description = "description"
 }
 
 variable meu_nome {
   type        = string
-  default     = "mineiro"
+  default     = "desafio"
   description = "Adicionar seu nome"
 }

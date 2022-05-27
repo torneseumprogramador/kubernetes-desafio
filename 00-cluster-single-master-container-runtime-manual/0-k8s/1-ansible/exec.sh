@@ -4,7 +4,6 @@ ID_M1_DNS=$(terraform output | grep 'master -' | awk '{print $3;exit}' | cut -d'
 
 ID_W1_DNS=$(terraform output | grep 'worker 1 -' | awk '{print $4;exit}' | cut -d'"' -f 1)
 ID_W2_DNS=$(terraform output | grep 'worker 2 -' | awk '{print $4;exit}' | cut -d'"' -f 1)
-ID_W3_DNS=$(terraform output | grep 'worker 3 -' | awk '{print $4;exit}' | cut -d'"' -f 1)
 
 cd ../1-ansible
 
@@ -17,9 +16,6 @@ $ID_W1_DNS
 
 [k8s-node-2]
 $ID_W2_DNS
-
-[k8s-node-3]
-$ID_W3_DNS
 
 " > hosts
 

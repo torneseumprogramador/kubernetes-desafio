@@ -44,6 +44,11 @@ rm -rf ~/.kube/
 aws eks update-kubeconfig --name desafio-k8s --region us-east-1
 ```
 
+Apagar Cluster
+```shell
+aws eks delete-cluster --name desafio-k8s
+```
+
 Criar os worknodes
 - Entrar no cloud formation
 - https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/template

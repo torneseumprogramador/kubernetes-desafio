@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: clusterip-didox
+  name: clusterip-java
 spec:
   type: ClusterIP
   selector:
-    app: didox-nodejs
+    app: pod-javadb
   ports:
-    - port: 3000
-      targetPort: 3000
+    - port: 8080
+      targetPort: 8080

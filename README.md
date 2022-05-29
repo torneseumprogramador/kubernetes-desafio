@@ -7,6 +7,10 @@ kubectl get nodes -o wide
 ```shell
 kubectl run didox-nginx --image=nginx:latest  
 ```
+# editando um pod por comando
+```shell
+kubectl edit pod java
+```
 
 # Lista o pod e mostra o IP local
 ```shell

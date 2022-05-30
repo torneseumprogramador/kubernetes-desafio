@@ -1,0 +1,54 @@
+# Documentação 
+# https://kubernetes.io/docs/concepts/storage/volumes/
+
+### Criar o AWS EBS ###
+# aws ec2 create-volume --availability-zone=us-east-1a --size=10 --volume-type=gp2
+#############
+# Pegar o ID do volume e configurar abaixo
+#############
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - image: mysql
+        name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: root
+        - name: MYSQL_DATABASE
+          value: db-k8s-desafio
+        - name: MYSQL_USER
+          value: k8s
+        - name: MYSQL_PASSWORD
+          value: alunos
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - mountPath: /test-ebs
+          name: mysql-volume
+        resources:
+          requests:
+            memory: "300Mi" # 512 MB
+            cpu: "0.2" # 1 milicors VCPU # este recurso tira do meu cluster este recurso #https://www.datacenters.com/news/what-is-a-vcpu-and-how-do-you-calculate-vcpu-to-cpu https://www.hyve.com/what-is-a-vmware-vcpu/
+          limits: # caso a aplicação precise de mais recurso, ele coloca este limite automático
+            memory: "600Mi" # 800 MB
+            cpu: "0.4"
+      volumes:
+      - name: mysql-volume
+        awsElasticBlockStore:
+          volumeID: "vol-0da7c0a09a08b581a"
+          fsType: ext4
+

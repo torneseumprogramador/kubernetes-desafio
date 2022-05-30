@@ -8,4 +8,4 @@ CREATE TABLE MyGuests (
 
 insert into MyGuests (firstname, lastname, email)values('Danilo', 'Aparecido', 'danilo@torneseumprogramador.com.br');
 
-select * from MyGuests
+select * from MyGuests;

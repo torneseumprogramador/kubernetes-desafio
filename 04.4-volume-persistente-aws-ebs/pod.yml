@@ -1,0 +1,23 @@
+### Criar o AWS EBS ###
+# aws ec2 create-volume --availability-zone=us-east-1 --size=10 --volume-type=gp2
+#############
+# Pegar o ID do volume e configurar abaixo
+#############
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-ebs
+spec:
+  containers:
+  - image: k8s.gcr.io/test-webserver
+    name: test-container
+    volumeMounts:
+    - mountPath: /test-ebs
+      name: test-volume
+  volumes:
+  - name: test-volume
+    # This AWS EBS volume must already exist.
+    awsElasticBlockStore:
+      volumeID: "<volume id>"
+      fsType: ext4

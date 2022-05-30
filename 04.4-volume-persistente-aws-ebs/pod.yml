@@ -1,3 +1,6 @@
+# Documentação 
+# https://kubernetes.io/docs/concepts/storage/volumes/
+
 ### Criar o AWS EBS ###
 # aws ec2 create-volume --availability-zone=us-east-1 --size=10 --volume-type=gp2
 #############

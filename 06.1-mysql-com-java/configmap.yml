@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-configmap
+data:
+  MYSQL_DATABASE: db-k8s-desafio"
+  DATABASE_URL: "mysql://mysql:3306/db-k8s-desafio?useTimezone=true&serverTimezone=UTC"
+  USER: "k8s"

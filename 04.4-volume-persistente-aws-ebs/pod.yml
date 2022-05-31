@@ -2,7 +2,7 @@
 # https://kubernetes.io/docs/concepts/storage/volumes/
 
 ### Criar o AWS EBS ###
-# aws ec2 create-volume --availability-zone=us-east-1a --size=10 --volume-type=gp2
+# aws ec2 create-volume --availability-zone=us-east-1d --size=10 --volume-type=gp2
 #############
 # Pegar o ID do volume e configurar abaixo
 #############
@@ -13,14 +13,13 @@ metadata:
   name: test-ebs
 spec:
   containers:
-  - image: k8s.gcr.io/test-webserver
+  - image: nginx
     name: test-container
     volumeMounts:
     - mountPath: /test-ebs
       name: test-volume
   volumes:
   - name: test-volume
-    # This AWS EBS volume must already exist.
     awsElasticBlockStore:
       volumeID: "<volume id>"
       fsType: ext4

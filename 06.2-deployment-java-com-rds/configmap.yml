@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: mysql-configmap
+  name: rds-configmap
 data:
-  MYSQL_DATABASE: db-k8s-desafio"
-  DATABASE_URL: "mysql://mysql:3306/db-k8s-desafio?useTimezone=true&serverTimezone=UTC"
-  USER: "k8s"
+  USER: "root"
+  DATABASE_URL: "mysql://k8s-desafio.cvhqofz3hgme.us-east-1.rds.amazonaws.com
+:3306/k8s_desafio?useTimezone=true&serverTimezone=UTC"

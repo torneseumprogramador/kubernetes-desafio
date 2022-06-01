@@ -29,7 +29,7 @@ spec:
         - name: MYSQL_ROOT_PASSWORD
           value: root
         - name: MYSQL_DATABASE
-          value: db-k8s-desafio
+          value: db_k8s_desafio
         - name: MYSQL_USER
           value: k8s
         - name: MYSQL_PASSWORD

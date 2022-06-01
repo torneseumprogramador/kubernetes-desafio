@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: java-jwt
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: java
@@ -24,18 +24,25 @@ spec:
         - name: PASSWORD
           valueFrom:
             secretKeyRef:
-              name: db-mysql-secret
-              key: MYSQL_PASSWORD
+              name: rds-secret
+              key: PASSWORD
         - name: USER
           valueFrom:
             configMapKeyRef:
-              name: mysql-configmap
+              name: rds-configmap
               key: USER
         - name: DATABASE_URL
           valueFrom:
             configMapKeyRef:
-              name: mysql-configmap
+              name: rds-configmap
               key: DATABASE_URL
         ports:
         - containerPort: 8080
+        resources:
+          requests:
+            memory: "500Mi" # 512 MB
+            cpu: "0.5" # 1 milicors VCPU # este recurso tira do meu cluster este recurso #https://www.datacenters.com/news/what-is-a-vcpu-and-how-do-you-calculate-vcpu-to-cpu https://www.hyve.com/what-is-a-vmware-vcpu/
+          limits: # caso a aplicação precise de mais recurso, ele coloca este limite automático
+            memory: "800Mi" # 800 MB
+            cpu: "1"
       

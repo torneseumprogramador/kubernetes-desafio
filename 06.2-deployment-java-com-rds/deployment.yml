@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-jwt
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: java
+  selector:
+    matchLabels:
+      app: java
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: java
+    spec:
+      containers:
+      - image: didox/java-jwt-mysql-desafio-k8s
+        name: java-jwt
+        env:
+        - name: PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-mysql-secret
+              key: MYSQL_PASSWORD
+        - name: USER
+          valueFrom:
+            configMapKeyRef:
+              name: mysql-configmap
+              key: USER
+        - name: DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: mysql-configmap
+              key: DATABASE_URL
+        ports:
+        - containerPort: 8080
+      

@@ -26,14 +26,26 @@ spec:
       - image: mysql
         name: mysql
         env:
-        - name: MYSQL_ROOT_PASSWORD
-          value: root
         - name: MYSQL_DATABASE
-          value: db-k8s-desafio
-        - name: MYSQL_USER
-          value: k8s
-        - name: MYSQL_PASSWORD
-          value: alunos
+            valueFrom:
+              configMapKeyRef:
+                name: mysql-configmap
+                key: MYSQL_DATABASE
+          - name: MYSQL_USER
+            valueFrom:
+              configMapKeyRef:
+                name: mysql-configmap
+                key: USER
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-mysql-secret
+                key: MYSQL_ROOT_PASSWORD
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-mysql-secret
+                key: MYSQL_PASSWORD
         ports:
         - containerPort: 3306
         volumeMounts:
@@ -51,4 +63,16 @@ spec:
         awsElasticBlockStore:
           volumeID: "<volume id>"
           fsType: ext4
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  ports:
+  - port: 3306
+  selector:
+    app: mysql
+  clusterIP: None
 

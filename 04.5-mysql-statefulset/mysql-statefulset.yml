@@ -9,7 +9,7 @@ spec:
     matchLabels:
       app: mysqlstatefulset
   serviceName: mysqlstatefulset
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
@@ -19,26 +19,48 @@ spec:
         - name: mysql
           image: mysql:latest
           env:
+          - name: MYSQL_DATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: mysql-configmap
+                key: MYSQL_DATABASE
+          - name: MYSQL_USER
+            valueFrom:
+              configMapKeyRef:
+                name: mysql-configmap
+                key: USER
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: db-mysql-secret
                 key: MYSQL_ROOT_PASSWORD
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-mysql-secret
+                key: MYSQL_PASSWORD
           ports:
           - containerPort: 3306
             name: mysql
+          resources:
+            requests:
+              memory: "300Mi" # 512 MB
+              cpu: "0.2" # 1 milicors VCPU # este recurso tira do meu cluster este recurso #https://www.datacenters.com/news/what-is-a-vcpu-and-how-do-you-calculate-vcpu-to-cpu https://www.hyve.com/what-is-a-vmware-vcpu/
+            limits: # caso a aplicação precise de mais recurso, ele coloca este limite automático
+              memory: "600Mi" # 800 MB
+              cpu: "0.4"
           volumeMounts:
           - name: mysql-persistent-storage
             mountPath: /var/lib/mysql
       volumes:
       - name: mysql-persistent-storage
         persistentVolumeClaim:
-          claimName: mysql-pv-claim
+          claimName: mysql-pv-claim-state
 ---
 # apiVersion: v1
 # kind: PersistentVolume
 # metadata:
-#   name: "mysql-pv-volume"
+#   name: "mysql-pv-volume-state"
 # spec:
 #   storageClassName: manual
 #   capacity:
@@ -53,26 +75,38 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: mysql-pv-volume
+  name: mysql-pv-volume-state
   labels:
     type: local
 spec:
-  storageClassName: manual
+  storageClassName: manual-state
   capacity:
     storage: 1Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/data"
+    path: "/mnt-state/data"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mysql-pv-claim
+  name: mysql-pv-claim-state
 spec:
-  storageClassName: manual
+  storageClassName: manual-state
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 1Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-state
+spec:
+  type: ClusterIP
+  ports:
+  - port: 3306
+  selector:
+    app: mysqlstatefulset

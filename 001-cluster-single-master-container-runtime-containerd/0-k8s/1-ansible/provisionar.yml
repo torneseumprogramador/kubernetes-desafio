@@ -19,6 +19,13 @@
       shell: hostname k8s-node-2 && echo "k8s-node-2" > /etc/hostname
       become: yes
 # ---
+- hosts:
+  - k8s-node-3
+  tasks:
+    - name: "Configura hostname k8s-node-3"
+      shell: hostname k8s-node-3 && echo "k8s-node-3" > /etc/hostname
+      become: yes
+# ---
 # install link: https://phoenixnap.com/kb/install-kubernetes-on-ubuntu
 - hosts: all
   become: true
@@ -72,7 +79,7 @@
 
 # Correção na AWS BUG
 # - https://github.com/rancher/rancher/issues/6139
-# kubectl rollout restart deployment coredns --namespace
+# kubectl rollout restart deployment coredns -n kube-system
 
 # recuperar join
 # kubeadm token create --print-join-command

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: java-jwt
+  name: java-app
 spec:
   replicas: 1
   selector:
@@ -18,19 +18,16 @@ spec:
         app: java
     spec:
       containers:
-      - image: didox/java-jwt-mysql-desafio-k8s
-        name: java-jwt
+      - image: didox/crud-java-login
+        name: java-app
         env:
         - name: PASSWORD
           valueFrom:
             secretKeyRef:
               name: db-mysql-secret
-              key: MYSQL_PASSWORD
+              key: MYSQL_ROOT_PASSWORD
         - name: USER
-          valueFrom:
-            configMapKeyRef:
-              name: mysql-configmap
-              key: USER
+          value: root
         - name: DATABASE_URL
           valueFrom:
             configMapKeyRef:

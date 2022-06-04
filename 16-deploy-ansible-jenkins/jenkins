@@ -19,7 +19,7 @@ pipeline {
                 sh "cd turma_devops && docker build -t didox/app-nodejs-desafio-k8s . && docker push didox/app-nodejs-desafio-k8s"
             }
         }
-        stage('Deploy k8s Azure') {
+        stage('Deploy k8s') {
             steps {
                 sh "rm -rf kubernetes-desafio"
                 sh "git clone https://github.com/torneseumprogramador/kubernetes-desafio"

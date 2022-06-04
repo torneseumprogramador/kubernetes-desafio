@@ -7,4 +7,5 @@
         dest: "/root/"
     
     - name: "Deploy k8s nodejs app"
-      shell: kubectl apply -f pod-jenkins.yml
+      become: yes
+      shell: cd /root/ && kubectl apply -f pod-jenkins.yml

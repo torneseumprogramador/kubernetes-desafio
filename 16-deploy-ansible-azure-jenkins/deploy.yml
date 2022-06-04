@@ -1,0 +1,10 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: "Cópia arquivo de deploy"
+      copy:
+        src: "pod-jenkins.yml"
+        dest: "/root/"
+    
+    - name: "Deploy k8s nodejs app"
+      shell: kubectl apply -f pod-jenkins.yml

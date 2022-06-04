@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                sh "rm -rf turma_devops"
+                sh "git clone https://github.com/Didox/turma_devops"
+                sh "cd turma_devops && npm install"
+            }
+        }
+        stage('Teste') {
+            steps {
+                sh "cd turma_devops && npm run tdd"
+            }
+        }
+        stage('Push docker') {
+            steps {
+                sh "cd turma_devops && docker build -t didox/app-nodejs-desafio-k8s . && docker push didox/app-nodejs-desafio-k8s"
+            }
+        }
+        stage('Deploy k8s Azure') {
+            steps {
+                sh "rm -rf treinamento-devops"
+                sh "git clone https://github.com/Didox/treinamento-devops"
+                sh "cd treinamento-devop/16-deploy-ansible-azure-jenkins && ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts deploy.yml -u ubuntu --private-key /var/lib/jenkins/chave.pem"
+            }
+        }
+    }
+}

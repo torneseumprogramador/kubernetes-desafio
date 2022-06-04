@@ -8,4 +8,4 @@
     
     - name: "Deploy k8s nodejs app"
       become: yes
-      shell: cd /root/ && kubectl apply -f pod-jenkins.yml
+      shell: cd /root/ && kubectl delete -f pod-jenkins.yml && kubectl apply -f pod-jenkins.yml

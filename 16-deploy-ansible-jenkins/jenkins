@@ -23,7 +23,7 @@ pipeline {
             steps {
                 sh "rm -rf kubernetes-desafio"
                 sh "git clone https://github.com/torneseumprogramador/kubernetes-desafio"
-                sh "cd kubernetes-desafio/16-deploy-ansible-azure-jenkins && ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts deploy.yml -u ubuntu --private-key /var/lib/jenkins/chave.pem"
+                sh "cd kubernetes-desafio/16-deploy-ansible-jenkins && ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts deploy.yml -u ubuntu --private-key /var/lib/jenkins/chave.pem"
             }
         }
     }

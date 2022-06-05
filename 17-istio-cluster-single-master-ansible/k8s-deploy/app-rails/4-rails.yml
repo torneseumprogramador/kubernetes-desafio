@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rails
+  labels:
+    app: rails
+spec:
+  containers:
+    - name: mundo-feliz-ecommerce
+      image: didox/ruby-mundo-feliz-ecommerce:latest
+      env:
+        - name: DATABASE_URL_RUBY
+          value: "mysql2://root:root@mysql-state:3306/db_k8s_desafio?createDatabaseIfNotExist=true&useTimezone=true&serverTimezone=UTC"
+        - name: HOST_DATABASE_RUBY
+          value: mysql-state
+        - name: DATABASE_RUBY
+          value: "db_k8s_desafio"
+        - name: USER_RUBY
+          value: "root"
+        - name: PASS_RUBY
+          value: "root"
+      ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodeport-rails
+spec:
+  type: NodePort
+  ports:
+    - port: 3000
+      nodePort: 30002 # 30000 ~ 32767
+  selector:
+    app: rails

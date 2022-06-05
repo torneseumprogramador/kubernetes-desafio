@@ -1,0 +1,34 @@
+upstream javajwt {
+    server 172.31.55.118:30001;
+}
+
+upstream nodejs {
+    server 172.31.55.118:30000;
+}
+
+server {
+    proxy_set_header   X-Forwarded-For $remote_addr;
+    proxy_set_header   Host $http_host;
+    proxy_connect_timeout 30s;
+    proxy_read_timeout 30s;
+
+    location = /javajwt {
+        proxy_pass http://javajwt/;
+    }
+
+    location ~ ^/javajwt/([A-Za-z0-9]+) {
+        proxy_pass http://javajwt/$1;
+    }
+
+    location ~ ^/javajwt/[^/]+$ {
+        proxy_pass http://javajwt/;
+    }
+
+    location = /nodejs {
+        proxy_pass http://nodejs/;
+    }
+
+    location = / {
+        proxy_pass http://nodejs/;
+    }
+}

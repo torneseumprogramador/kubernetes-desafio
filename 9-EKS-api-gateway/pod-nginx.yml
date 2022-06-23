@@ -26,11 +26,11 @@ data:
         rewrite ^/nodejs/(.*)  /nodejs/$1;
         rewrite ^/csharp/(.*)  /csharp/$1;
 
-        location = /nodejs {
+        location /nodejs/ {
             proxy_pass http://nodejs/;
         }
 
-        location = /csharp {
+        location /csharp/ {
             proxy_pass http://csharp/;
         }
     }

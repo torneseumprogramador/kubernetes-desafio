@@ -22,6 +22,9 @@ data:
         proxy_read_timeout 30s;
 
         listen 80;
+        
+        rewrite ^/nodejs/(.*)  /nodejs/$1;
+        rewrite ^/csharp/(.*)  /csharp/$1;
 
         location = /nodejs {
             proxy_pass http://nodejs/;
